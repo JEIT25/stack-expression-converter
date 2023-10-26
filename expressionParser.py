@@ -5,6 +5,8 @@ class Stack:
     temp = []
     operators = ['^','*','/','+','-']
 
+
+
     #push element
     def add(self,dataval):
         self.stack.append(dataval)
@@ -20,7 +22,30 @@ class Stack:
     def peak(self):
         return self.stack[-1]
 
-    def getPrecedence(self,operator):
+
+    # precedence checker, returns precedence value of an operator
+    def precedCheck(self, operator):
+        precedValue = 0
+        match operator:
+            case '^':
+                precedValue = 3
+                return precedValue
+            case '*':
+                precedValue = 2
+                return precedValue
+            case '/':
+                precedValue = 2
+                return precedValue
+            case '-':
+                precedValue = 1
+                return precedValue
+            case '+':
+                precedValue = 1
+                return precedValue
+            case _: #default
+                precedValue = 0
+                return precedValue
+
 
 
     # method that identifies and returns type of element
@@ -55,11 +80,17 @@ class Stack:
                             self.temp.append(elementt) #add popped elements to temp
                             elementt = self.remove() #remove elementt in between closing and open parenthesis
                     else:
-                        self.stack.append(element)
+                        if len(self.stack) == 0:
+                            self.add(element)
+                        elif self.precedCheck(element) == self.precedCheck(self.peak()):
+                            poppedElem = self.remove()
+                            self.temp.append(poppedElem)
+                            self.add(element)
+                        else:
+                            self.add(element)
                 else:
                     self.temp.append(element)
                 index -= 1
-
 
 
 
@@ -70,7 +101,7 @@ class Stack:
             return #infix
 
 Astack = Stack()
-Astack.expression = '(a+b)+(b+c)'
+Astack.expression = '(a+b)+(b+c)-5e'
 Astack.expressionParser('prefix')
 print(Astack.stack)
 print(Astack.temp)
